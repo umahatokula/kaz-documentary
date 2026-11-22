@@ -29,7 +29,7 @@
 - Screen drawing: `d = SD(ImageDraw.Draw(img))` and `SFont(path, size)`. `getbbox`/`getlength` answer in design units, so centring maths is unchanged. New screen images use `Image.new(mode, (PXW, PXH))`; a small screen sprite is `int(w*KS) x int(h*KS)` and is pasted at `int(x*KS), int(y*KS)`.
 - Screen arrays: grain, vignette and glow grids are `PXH x PXW`; build coordinate grids as `xx = np.arange(PXW)/KS` so formulas stay in design units. Pixel shifts (`np.roll`, gate weave, scratches, blur radii) are multiplied by `KS`.
 - World space is untouched: `world_M` is multiplied by `KS`, so cards, maps and the background are warped straight to the output size. Never wrap card drawing in `SD`.
-- `KAZ_CRF` and `KAZ_PRESET` set the chunk encode; `KAZ_ASSETS` is the project folder on the Mac.
+- `KAZ_CRF` and `KAZ_PRESET` set the chunk encode; `KAZ_ASSETS` is the episode folder on the Mac. `hd.fp(name)` finds a bundled font and `hd.TK` is the toolkit folder (shared data such as `countries.geojson`).
 
 ## Performance
 1080p board frames take about 0.15–0.3 s each on one core; 1440p about 1.8x that, with about 2.7 GB of memory per board process. Split across cores. At 1440p the grain makes constant-quality encodes huge (about 160 Mbps at CRF 18), so the master uses a 20 Mbps cap. Encode the master at CRF 18, then deliver at CRF 24 (about 90 MB per 90 s).

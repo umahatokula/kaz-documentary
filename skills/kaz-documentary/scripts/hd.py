@@ -13,6 +13,7 @@ from PIL import ImageFont
 KS = float(os.environ.get("KAZ_SCALE", "1"))
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
+TK = _HERE   # the series toolkit folder (shared data such as countries.geojson lives here)
 FONT_DIRS = [os.path.join(_HERE, "fonts"), "/usr/share/fonts/truetype/freefont", "/usr/share/fonts/truetype/crosextra"]
 
 

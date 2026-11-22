@@ -10,6 +10,6 @@ Turns a voiceover and a folder of images into a narrated documentary video in th
 
 **What it makes:** maps, notes, labels, stamps, 2D scenes, intertitles, music and sound effects, delivered as a 1080p preview MP4 with subscribe prompts at calm moments and a 10-second YouTube end screen (empty spaces for a video element and your channel logo).
 
-**Upload master:** once you approve the preview, Claude sets up `render_master.command` in your project folder. Double-click it on your Mac and it renders the same video natively at 2560x1440 (sharper YouTube encodes) into `out/`, rebuilding the soundtrack from your chapter WAVs. First run installs ffmpeg and a few Python packages via Homebrew; re-running resumes an interrupted render.
+**Upload master:** episodes live in `~/Documents/Kaz Documentary/<episode>/`, with one shared `_toolkit/` for the whole series. Once you approve the preview, Claude sets up `render_master.command` in the episode folder. Double-click it on your Mac and it renders the same video natively at 2560x1440 (sharper YouTube encodes) into `out/`, rebuilding the soundtrack from your chapter WAVs. ffmpeg and the Python packages are installed once, on the series' first render; re-running resumes an interrupted render.
 
 **Requirements** (all standard in Claude's workspace): Python 3 with numpy, opencv-python and Pillow; ffmpeg. Fonts (FreeMono Bold, GPL with font exception; Caladea, Apache 2.0) are bundled in `scripts/fonts/`. The Mac master needs Homebrew.

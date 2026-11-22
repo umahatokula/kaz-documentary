@@ -1,6 +1,6 @@
 {
   "name": "kaz-documentary",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Make narrated documentary videos in the Kaz evidence-board style, with optional vintage silent-film 2D animation sections, rendered to MP4 from a voiceover and images.",
   "author": {
     "name": "Kaz"
