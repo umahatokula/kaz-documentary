@@ -52,6 +52,20 @@ Read `references/style-guide.md` before planning shots. Read `references/engine-
    - Ship small files only: the user's link may time out above a few MB. Send the toolkit and the episode's `kaz/` as `.tgz` files with `device_commit_files` (stagedPath under /mnt/user-data/outputs, 25 MB max) and unpack them with `device_bash`. Never ship the mixed audio; `make_audio.py` rebuilds it from the WAVs already on the Mac.
    - Tell the user to double-click `render_master.command` in the episode folder (if macOS blocks it: right-click > Open). It hands over to `_toolkit/render_episode.sh`, which installs ffmpeg and the Python packages only if they're missing (first episode only), keeps the Mac awake, sizes the worker count to memory (about 3 GB per worker), and resumes if re-run. Output: `out/<name>_1440p.mp4` at 20 Mbps (about 9 GB per hour) plus the `.srt`. `_master/` is scratch.
 
+13. **Upload kit (every video).** Write `out/<name>_YouTube_upload.txt` in the episode folder, next to the master. It contains:
+   - **File name:** a lowercase, hyphenated, keyword-led name to rename the master to before uploading.
+   - **Title:** one recommended title, plus two alternatives for a title test.
+   - **Thumbnails:** two, for a thumbnail test.
+   - **Description:** what happened, the allegations framed as allegations, chapters from the narration timings (the first one at 0:00), "watch next" lines for earlier episodes, sources, and a note that any vintage section is an illustrative reconstruction.
+   - **Pinned comment:** posted from the channel account right after publishing, then pinned (⋮ > Pin). Keep it to 4 short paragraphs and under 120 words:
+     1. the hook in one line (what happened, and what is still unresolved);
+     2. two or three neutral, sourced facts that set up the debate, with allegations as allegations and each denial included;
+     3. a specific question that offers 2–3 concrete options from the video (not "what do you think?");
+     4. "Chapters and sources are in the description. Which unsolved case should <channel> cover next?"
+     No links, hashtags, emoji or begging for likes. Add one line for the user: reply to the first few comments in the first hour.
+   - **Tags:** under 500 characters.
+   - **Settings:** audience, altered or synthetic content, category, language, captions file and playlist.
+
 ## Rules
 
 - Keep one continuous camera with no hard cuts, except planned world changes (iris wipes into and out of vintage inserts, a glitch into the end title).
@@ -61,3 +75,4 @@ Read `references/style-guide.md` before planning shots. Read `references/engine-
 - Keep the preview small: shareable encodes at CRF 24. Grain inflates the bitrate, so for long videos encode the preview with `promo.py build --bitrate` sized to fit the send limit (about 3300k for 14 minutes stays under 400 MB). The upload is the Mac master (step 12).
 - Draw everything that lives on screen (tags, overlays, year/count/thesis/list cards, end titles, vintage scenes, promo) through `SD(...)` and `SFont(...)` in 1920x1080 design coordinates, and size screen arrays (grain, vignette, warps) with `PXW`/`PXH`. Leave world-space card drawing alone; cards get their resolution from `R`.
 - Every video ends with the promo pass: subscribe prompts at calm moments and the 10 s end screen with empty, unoutlined spaces for the video element and logo.
+- Every video ships with an upload kit that includes a pinned comment (step 13).
