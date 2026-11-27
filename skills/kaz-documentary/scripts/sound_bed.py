@@ -2,16 +2,53 @@
 Usage: python3 sound_bed.py cues.json out.wav
 cues.json = {"duration": 92.6, "whoosh": [..s], "type": [[start_s, n_chars], ...],
              "thud": [..s], "shot": [..s], "scratch": [[start_s, dur_s], ...],
-             "tension": [..s peaks], "film": [[start_s, end_s], ...], "engine": [[start_s, end_s], ...]}"""
+             "tension": [..s peaks], "film": [[start_s, end_s], ...], "engine": [[start_s, end_s], ...],
+             "mood": "drone" | "piano" | "pulse" | "ambient"}   (mood is optional; default drone)
+Moods: drone = dark low drone with a soft pulse (the original bed); piano = sparse felt-piano notes in a minor key
+over a quiet pad; pulse = a ticking clock and slow heartbeat over a thin pad (procedural, countdown stories);
+ambient = airy wind and slow high shimmer (landscapes, long aftermaths)."""
 import numpy as np, wave, json, sys
 c = json.load(open(sys.argv[1])); sr = 48000; D = c["duration"]; n = int(sr*D); t = np.arange(n)/sr
 rng = np.random.default_rng(3)
-pad = sum(a*np.sin(2*np.pi*f*t+np.sin(2*np.pi*.07*t)*2) for f, a in [(55,1),(65.4,.6),(82.4,.5),(110,.35),(130.8,.2)])
-pad *= (.5+.5*np.sin(2*np.pi*t/23)**2)*np.clip(t/3,0,1)*np.clip((D-t)/2.5,0,1)
-for p in c.get("tension", []): pad *= 1+.6*np.exp(-((t-p)/5)**2)
-x = pad/np.abs(pad).max()*.16
-for b in np.arange(15, D-2, 1.25):
-    i = int(b*sr); L = int(.25*sr); x[i:i+L] += .08*np.sin(2*np.pi*48*np.arange(L)/sr)*np.exp(-np.arange(L)/sr*18)
+mood = c.get("mood", "drone")
+env = np.clip(t/3, 0, 1)*np.clip((D-t)/2.5, 0, 1)
+def tension(y):
+    for p in c.get("tension", []): y = y*(1+.6*np.exp(-((t-p)/5)**2))
+    return y
+def lowpad(scale=1.0):
+    y = sum(a*np.sin(2*np.pi*f*t+np.sin(2*np.pi*.07*t)*2) for f, a in [(55,1),(65.4,.6),(82.4,.5),(110,.35),(130.8,.2)])
+    return y*(.5+.5*np.sin(2*np.pi*t/23)**2)*env*scale
+if mood == "piano":
+    x = tension(lowpad())/np.abs(lowpad()).max()*.06
+    notes = [110, 130.8, 146.8, 164.8, 196, 220, 261.6, 293.7]       # A minor
+    for b in np.arange(4, D-4, 1.0):
+        if rng.random() < .32:
+            f = notes[rng.integers(len(notes))]; L = int(4*sr); u = np.arange(L)/sr
+            tone = sum(h*np.sin(2*np.pi*f*k*u) for k, h in ((1, 1), (2, .45), (3, .18), (4, .08)))*np.exp(-u*1.3)*(1-np.exp(-u*80))
+            i = int(b*sr); e = min(n, i+L); x[i:e] += .07*tone[:e-i]
+elif mood == "pulse":
+    x = tension(lowpad(.6))/np.abs(lowpad()).max()*.08
+    for b in np.arange(6, D-3, 1.0):                                   # clock tick
+        i = int(b*sr); L = int(.02*sr); x[i:i+L] += .05*rng.normal(0, 1, L)*np.exp(-np.arange(L)/sr*300)
+    for b in np.arange(8, D-3, 1.0):                                   # heartbeat
+        for off, g in ((0, .1), (.22, .06)):
+            i = int((b+off)*sr); L = int(.18*sr); u = np.arange(L)/sr
+            if i+L < n: x[i:i+L] += g*np.sin(2*np.pi*52*u)*np.exp(-u*22)
+elif mood == "ambient":
+    wn = rng.normal(0, 1, n); k = .004                                  # one-pole low-pass wind
+    try:
+        from scipy.signal import lfilter; y = lfilter([k], [1, k-1], wn)
+    except ImportError:
+        y = np.zeros(n); a = 0.0
+        for j in range(n): a += k*(wn[j]-a); y[j] = a
+    y = y/np.abs(y).max()*(.6+.4*np.sin(2*np.pi*t/31))
+    sh = sum(np.sin(2*np.pi*f*t)*(.5+.5*np.sin(2*np.pi*t/p)) for f, p in ((659.3, 17), (987.8, 23), (1318.5, 29)))
+    x = tension(y*.10 + sh*.012 + lowpad(.3)/np.abs(lowpad()).max()*.05)*env
+else:
+    pad = tension(lowpad())
+    x = pad/np.abs(pad).max()*.16
+    for b in np.arange(15, D-2, 1.25):
+        i = int(b*sr); L = int(.25*sr); x[i:i+L] += .08*np.sin(2*np.pi*48*np.arange(L)/sr)*np.exp(-np.arange(L)/sr*18)
 def add(s, at, g):
     i = int(at*sr); e = min(n, i+len(s)); x[i:e] += g*s[:e-i]
 def whoosh(d=.6):

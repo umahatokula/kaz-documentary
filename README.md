@@ -6,7 +6,7 @@ Turns a voiceover and a folder of images into a narrated documentary video in th
 
 **What you provide:** a voiceover (MP3 or WAV) or a script, plus photos of the people and events. You supply photos of real people yourself.
 
-**Looks:** seven background themes (teal slate, cork board, chalkboard, blueprint navy, manila case file, olive army canvas, concrete grey). It suggests a different one for each video and you confirm it.
+**Every episode looks different (v0.6):** before each video Claude asks you a set of style questions: story structure, opening, length, a signature sequence, background theme (seven), reconstruction style (silent film, newspaper print or courtroom sketch), map style, music bed (drone, piano, pulse or ambient), who narrates (your ElevenLabs clone, your own recording or Kokoro), host intro/outro in your real voice, a closing "What the evidence shows" segment (drafted by Claude, approved and voiced by you) and thumbnail layout (pinned, split, full-bleed or case file). It recommends one option per question and leaves out anything used too recently, so uploads don't look template-made (YouTube's "inauthentic content" rule). Your choices are logged in `~/Documents/Kaz Documentary/style_log.json`.
 
 **What it makes:** maps, notes, labels, stamps, 2D scenes, intertitles, music and sound effects, delivered as a 1080p preview MP4 with subscribe prompts at calm moments and a 10-second YouTube end screen (empty spaces for a video element and your channel logo).
 
